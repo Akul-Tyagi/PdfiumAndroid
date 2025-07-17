@@ -6,4 +6,4 @@ before_install:
 
 install:
   - chmod +x gradlew
-  - ./gradlew clean -Pandroid.disableExternalNativeBuild=true -Pgroup=com.github.Akul-Tyagi -Pversion=$VERSION publishToMavenLocal
+  - ./gradlew clean -Pandroid.disableExternalNativeBuild=true -Pgroup=com.github.Akul-Tyagi -Pversion=$VERSION -Psigning.skip=true publishToMavenLocal
