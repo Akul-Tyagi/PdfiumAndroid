@@ -18,13 +18,25 @@ android {
         minSdkVersion 19
         targetSdkVersion 31
         versionCode 1
-        versionName "1.9.2"
+        versionName "1.9.3-16kb"
         buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
+
+        externalNativeBuild {
+            ndkBuild {
+                arguments "APP_LDFLAGS+=-Wl,--page-size=16384"
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    externalNativeBuild {
+        ndkBuild {
+            path "src/main/jni/Android.mk"
         }
     }
 
@@ -47,8 +59,8 @@ dependencies {
 
 // Maven Publishing
 ext {
-    PUBLISH_GROUP_ID = 'com.github.mhiew'
-    PUBLISH_VERSION = "1.9.2"
+    PUBLISH_GROUP_ID = 'com.github.Akul-Tyagi'
+    PUBLISH_VERSION = "1.9.3-16kb"
     PUBLISH_ARTIFACT_ID = 'pdfium-android'
 }
 
