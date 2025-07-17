@@ -2,7 +2,7 @@ APP_STL := c++_shared
 APP_CPPFLAGS += -fexceptions
 
 # Add page size flags to support 16KB pages
-APP_LDFLAGS += -Wl,--page-size=16384
+APP_LDFLAGS += -Wl,-z,max-page-size=16384
 
 #For ANativeWindow support
 APP_PLATFORM = android-19
