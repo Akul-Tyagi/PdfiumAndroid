@@ -67,5 +67,25 @@ ext {
     PUBLISH_ARTIFACT_ID = 'pdfium-android'
 }
 
-// Apply the publishing configuration
-apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+// For JitPack, we'll use a simpler publishing configuration
+if (hasProperty('android.disableExternalNativeBuild')) {
+    apply plugin: 'maven-publish'
+    
+    afterEvaluate {
+        publishing {
+            publications {
+                release(MavenPublication) {
+                    from components.release
+                    groupId = 'com.github.Akul-Tyagi'
+                    artifactId = 'pdfium-android'
+                    version = '1.9.3-16kb'
+                }
+            }
+        }
+    }
+} else {
+    // Only apply the Maven Central publishing script for non-JitPack builds
+    if (file("${rootProject.projectDir}/publish-mavencentral.gradle").exists()) {
+        apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
+    }
+}
