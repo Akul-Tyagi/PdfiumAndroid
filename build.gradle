@@ -10,7 +10,6 @@ buildscript {
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'maven-publish' // Add this for JitPack
 
 android {
     compileSdkVersion 31
@@ -61,19 +60,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                from components.release
-                groupId = 'com.github.Akul-Tyagi'
-                artifactId = 'pdfium-android'
-                version = '1.9.3-16kb'
-            }
-        }
-    }
-}
-
 // Maven Publishing
 ext {
     PUBLISH_GROUP_ID = 'com.github.Akul-Tyagi'
@@ -81,7 +67,5 @@ ext {
     PUBLISH_ARTIFACT_ID = 'pdfium-android'
 }
 
-// Only apply if the file exists
-if (file("${rootProject.projectDir}/publish-mavencentral.gradle").exists()) {
-    apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
-}
+// Apply the publishing configuration
+apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
