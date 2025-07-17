@@ -1,0 +1,6 @@
+before_install:
+  - echo "Skipping NDK build, using pre-compiled libraries"
+
+install:
+  - chmod +x gradlew
+  - ./gradlew clean -Pandroid.disableExternalNativeBuild=true -Pgroup=com.github.Akul-Tyagi -Pversion=$VERSION publishToMavenLocal
