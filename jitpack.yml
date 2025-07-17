@@ -1,0 +1,11 @@
+jdk:
+  - openjdk11
+
+before_install:
+  - sdk install java 11.0.13-open
+  - sdk use java 11.0.13-open
+  
+install:
+  - echo "Running a custom install command"
+  - chmod +x gradlew
+  - ./gradlew clean -Dorg.gradle.java.home=/usr/lib/jvm/java-11-openjdk-amd64 -Pgroup=com.github.Akul-Tyagi -Pversion=v1.9.3-16kb publishToMavenLocal
