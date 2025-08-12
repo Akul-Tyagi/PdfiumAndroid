@@ -13,6 +13,7 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 31
+    ndkVersion "27.3.13750724"
 
     defaultConfig {
         minSdkVersion 19
