@@ -18,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 31
-        versionCode 1
-        versionName "1.9.3-16kb"
+        versionCode 2
+        versionName "1.9.6-16kb"
         buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
 
     }
@@ -64,7 +64,7 @@ dependencies {
 // Maven Publishing
 ext {
     PUBLISH_GROUP_ID = 'com.github.Akul-Tyagi'
-    PUBLISH_VERSION = "1.9.3-16kb"
+    PUBLISH_VERSION = "1.9.6-16kb"
     PUBLISH_ARTIFACT_ID = 'pdfium-android'
 }
 
@@ -79,7 +79,7 @@ if (hasProperty('android.disableExternalNativeBuild')) {
                     from components.release
                     groupId = 'com.github.Akul-Tyagi'
                     artifactId = 'pdfium-android'
-                    version = '1.9.3-16kb'
+                    version = '1.9.6-16kb'
                 }
             }
         }
