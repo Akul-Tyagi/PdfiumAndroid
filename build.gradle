@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.Akul-Tyagi"
-version = "1.10.0-16kb"
+version = "1.10.1-16kb"
 
 android {
     namespace "com.shockwave.pdfium"

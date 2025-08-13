@@ -22,76 +22,42 @@ public class PdfiumCore {
     private static final String FD_FIELD_NAME = "descriptor";
 
     static {
-        try {
-            System.loadLibrary("c++_shared");
-            System.loadLibrary("modpng");
-            System.loadLibrary("modft2");
-            System.loadLibrary("modpdfium");
-            System.loadLibrary("jniPdfium");
-        } catch (UnsatisfiedLinkError e) {
-            Log.e(TAG, "Native libraries failed to load - " + e);
-        }
+        // Unified loader replaces direct individual System.loadLibrary calls
+        NativeLoader.load();
     }
 
     private native long nativeOpenDocument(int fd, String password);
-
     private native long nativeOpenMemDocument(byte[] data, String password);
-
     private native void nativeCloseDocument(long docPtr);
-
     private native int nativeGetPageCount(long docPtr);
-
     private native long nativeLoadPage(long docPtr, int pageIndex);
-
     private native long[] nativeLoadPages(long docPtr, int fromIndex, int toIndex);
-
     private native void nativeClosePage(long pagePtr);
-
     private native void nativeClosePages(long[] pagesPtr);
-
     private native int nativeGetPageWidthPixel(long pagePtr, int dpi);
-
     private native int nativeGetPageHeightPixel(long pagePtr, int dpi);
-
     private native int nativeGetPageWidthPoint(long pagePtr);
-
     private native int nativeGetPageHeightPoint(long pagePtr);
-
-    //private native long nativeGetNativeWindow(Surface surface);
-    //private native void nativeRenderPage(long pagePtr, long nativeWindowPtr);
     private native void nativeRenderPage(long pagePtr, Surface surface, int dpi,
                                          int startX, int startY,
                                          int drawSizeHor, int drawSizeVer,
                                          boolean renderAnnot);
-
     private native void nativeRenderPageBitmap(long pagePtr, Bitmap bitmap, int dpi,
                                                int startX, int startY,
                                                int drawSizeHor, int drawSizeVer,
                                                boolean renderAnnot);
-
     private native String nativeGetDocumentMetaText(long docPtr, String tag);
-
     private native Long nativeGetFirstChildBookmark(long docPtr, Long bookmarkPtr);
-
     private native Long nativeGetSiblingBookmark(long docPtr, long bookmarkPtr);
-
     private native String nativeGetBookmarkTitle(long bookmarkPtr);
-
     private native long nativeGetBookmarkDestIndex(long docPtr, long bookmarkPtr);
-
     private native Size nativeGetPageSizeByIndex(long docPtr, int pageIndex, int dpi);
-
     private native long[] nativeGetPageLinks(long pagePtr);
-
     private native Integer nativeGetDestPageIndex(long docPtr, long linkPtr);
-
     private native String nativeGetLinkURI(long docPtr, long linkPtr);
-
     private native RectF nativeGetLinkRect(long linkPtr);
-
     private native Point nativePageCoordsToDevice(long pagePtr, int startX, int startY, int sizeX,
                                                   int sizeY, int rotate, double pageX, double pageY);
-
 
     /* synchronize native methods */
     private static final Object lock = new Object();
@@ -104,22 +70,15 @@ public class PdfiumCore {
                 mFdField = FD_CLASS.getDeclaredField(FD_FIELD_NAME);
                 mFdField.setAccessible(true);
             }
-
             return mFdField.getInt(fdObj.getFileDescriptor());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-            return -1;
-        } catch (IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
             return -1;
         }
     }
 
-
-    /** Context needed to get screen density */
     public PdfiumCore(Context ctx) {
         mCurrentDpi = ctx.getResources().getDisplayMetrics().densityDpi;
-        Log.d(TAG, "Starting PdfiumAndroid " + BuildConfig.VERSION_NAME);
     }
 
     /** Create new document from file */
