@@ -1,9 +1,11 @@
 jdk:
-  - openjdk11
+  - openjdk21
 
 before_install:
-  - echo "Skipping NDK build, using pre-compiled libraries"
+  - sdkmanager --install "ndk;27.3.13750724" >/dev/null
+  - yes | sdkmanager --licenses >/dev/null
 
 install:
+  - export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/27.3.13750724"
   - chmod +x gradlew
-  - ./gradlew clean -Pandroid.disableExternalNativeBuild=true -Pgroup=com.github.Akul-Tyagi -Pversion=$VERSION -Psigning.skip=true publishToMavenLocal
+  - ./gradlew --no-daemon clean :assembleRelease :publishToMavenLocal

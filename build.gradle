@@ -1,92 +1,106 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
-    }
+plugins {
+    id 'com.android.library' version '8.12.0'
+    id 'org.jetbrains.kotlin.android' version '1.9.24'   // Remove if you decide to stay Java-only
+    id 'maven-publish'
 }
 
-apply plugin: 'com.android.library'
+group = "com.github.Akul-Tyagi"
+version = "1.10.0-16kb"
 
 android {
-    compileSdkVersion 31
-    ndkVersion "27.3.13750724"
+    namespace "com.shockwave.pdfium"
+    compileSdk 35
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 31
-        versionCode 2
-        versionName "1.9.6-16kb"
-        buildConfigField 'String', 'VERSION_NAME', "\"${defaultConfig.versionName}\""
-
+        minSdk 21
+        targetSdk 35
+        versionCode 7
+        versionName version
+        buildConfigField "String", "VERSION_NAME", "\"${versionName}\""
+        // If you want to explicitly restrict ABIs (optional):
+        // ndk { abiFilters += ["armeabi-v7a","arm64-v8a","x86","x86_64"] }
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles(
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro"
+            )
+        }
+        debug { }
+    }
+
+    // Use ndk-build (Android.mk / Application.mk)
+    externalNativeBuild {
+        ndkBuild {
+            path "src/main/jni/Android.mk"
+            // For troubleshooting link commands temporarily add:
+            // arguments "V=1"
         }
     }
 
-    // Conditional external native build based on property
-    if (project.hasProperty('android.disableExternalNativeBuild') && 
-        Boolean.parseBoolean(project.property('android.disableExternalNativeBuild').toString())) {
-        println "Skipping external native build, using pre-compiled libraries"
-    } else {
-        externalNativeBuild {
-            ndkBuild {
-                path "src/main/jni/Android.mk"
-                arguments "APP_LDFLAGS+=-Wl,--page-size=16384"
-            }
-        }
+    ndkVersion "27.3.13750724"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
-    sourceSets{
-        main {
-            jni.srcDirs = []
-            jniLibs.srcDir 'src/main/libs'
+    buildFeatures {
+        buildConfig = true
+    }
+
+    // Tell AGP we want to publish release variant with sources
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            // If you later add javadoc tasks you can also attach Javadoc jar here.
         }
     }
 }
 
-repositories {
-    google()
-    mavenCentral()
-    maven { url 'https://jitpack.io' }
-}
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
-
-// Maven Publishing
-ext {
-    PUBLISH_GROUP_ID = 'com.github.Akul-Tyagi'
-    PUBLISH_VERSION = "1.9.6-16kb"
-    PUBLISH_ARTIFACT_ID = 'pdfium-android'
-}
-
-// For JitPack, we'll use a simpler publishing configuration
-if (hasProperty('android.disableExternalNativeBuild')) {
-    apply plugin: 'maven-publish'
-    
-    afterEvaluate {
-        publishing {
-            publications {
-                release(MavenPublication) {
-                    from components.release
-                    groupId = 'com.github.Akul-Tyagi'
-                    artifactId = 'pdfium-android'
-                    version = '1.9.6-16kb'
+// Publication (wait until after Android has registered components)
+afterEvaluate {
+    publishing {
+        publications {
+            // Use the conventional 'release' publication name
+            create("release", MavenPublication) {
+                from components.release
+                groupId = project.group
+                artifactId = "pdfium-android"
+                version = project.version
+                pom {
+                    name = "PdfiumAndroid"
+                    description = "Pdfium Android binding (modernized, 16KB page size compliant)"
+                    url = "https://github.com/Akul-Tyagi/PdfiumAndroid"
+                    licenses {
+                        license {
+                            name = "Apache License 2.0"
+                            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    }
+                    scm {
+                        url = "https://github.com/Akul-Tyagi/PdfiumAndroid"
+                        connection = "scm:git:https://github.com/Akul-Tyagi/PdfiumAndroid.git"
+                        developerConnection = "scm:git:ssh:git@github.com:Akul-Tyagi/PdfiumAndroid.git"
+                    }
+                    developers {
+                        developer {
+                            id = "akul"
+                            name = "Akul Tyagi"
+                        }
+                    }
                 }
             }
         }
     }
-} else {
-    // Only apply the Maven Central publishing script for non-JitPack builds
-    if (file("${rootProject.projectDir}/publish-mavencentral.gradle").exists()) {
-        apply from: "${rootProject.projectDir}/publish-mavencentral.gradle"
-    }
+}
+
+dependencies {
+    // No external runtime dependencies presently
 }

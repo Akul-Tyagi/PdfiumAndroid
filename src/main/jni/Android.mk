@@ -1,53 +1,18 @@
 LOCAL_PATH := $(call my-dir)
 
-#Prebuilt libraries
+# Single modern pdfium prebuilt (renamed to libmodpdfium.so)
 include $(CLEAR_VARS)
-LOCAL_MODULE := aospPdfium
-
-ARCH_PATH = $(TARGET_ARCH_ABI)
-
-LOCAL_SRC_FILES := $(LOCAL_PATH)/lib/$(ARCH_PATH)/libmodpdfium.so
-
-
+LOCAL_MODULE := pdfium
+LOCAL_SRC_FILES := lib/$(TARGET_ARCH_ABI)/libpdfium.so
+LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/include
 include $(PREBUILT_SHARED_LIBRARY)
 
-#c++_shared
-include $(CLEAR_VARS)
-LOCAL_MODULE := libmodc++_shared
-
-LOCAL_SRC_FILES := $(LOCAL_PATH)/lib/$(ARCH_PATH)/libc++_shared.so
-
-
-include $(PREBUILT_SHARED_LIBRARY)
-
-#libmodft2
-include $(CLEAR_VARS)
-LOCAL_MODULE := libmodft2
-
-LOCAL_SRC_FILES := $(LOCAL_PATH)/lib/$(ARCH_PATH)/libmodft2.so
-
-
-include $(PREBUILT_SHARED_LIBRARY)
-
-#libmodpng
-include $(CLEAR_VARS)
-LOCAL_MODULE := libmodpng
-
-LOCAL_SRC_FILES := $(LOCAL_PATH)/lib/$(ARCH_PATH)/libmodpng.so
-
-
-include $(PREBUILT_SHARED_LIBRARY)
-
-#Main JNI library
+# JNI wrapper that calls into pdfium
 include $(CLEAR_VARS)
 LOCAL_MODULE := jniPdfium
-
 LOCAL_CFLAGS += -DHAVE_PTHREADS
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include
-LOCAL_SHARED_LIBRARIES += aospPdfium
+LOCAL_SHARED_LIBRARIES += pdfium
 LOCAL_LDLIBS += -llog -landroid -ljnigraphics
-
-
-LOCAL_SRC_FILES :=  $(LOCAL_PATH)/src/mainJNILib.cpp
-
+LOCAL_SRC_FILES := src/mainJNILib.cpp
 include $(BUILD_SHARED_LIBRARY)
