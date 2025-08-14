@@ -17,12 +17,10 @@ final class NativeLoader {
             "jniPdfium"
     };
 
-    // Optional STL (omit if you switch to static STL)
-    private static final String[] OPTIONAL_STL = {
-            "c++_shared"
-    };
+    // We link libc++ statically; don't attempt to load it.
+    private static final String[] OPTIONAL_STL = { };
 
-    // Legacy libs we used to ship (ignore failures)
+    // Legacy libs we used to ship (best-effort)
     private static final String[] LEGACY = {
             "modpdfium",
             "modpng",
@@ -34,13 +32,8 @@ final class NativeLoader {
         synchronized (NativeLoader.class) {
             if (loaded) return;
 
-            // 1. Try shared STL (ignore if packaged differently)
             for (String lib : OPTIONAL_STL) loadOne(lib, true);
-
-            // 2. Required new names
             for (String lib : PRIMARY) loadOne(lib, false);
-
-            // 3. Legacy best‑effort (ignore failures)
             for (String lib : LEGACY) loadOne(lib, true);
 
             loaded = true;
