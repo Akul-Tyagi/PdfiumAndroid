@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.Akul-Tyagi"
-version = "1.11.0-16kb"
+version = "1.11.1-16kb"
 
 android {
     namespace "com.shockwave.pdfium"
@@ -18,7 +18,7 @@ android {
         versionName version
         buildConfigField "String", "VERSION_NAME", "\"${versionName}\""
         // If you want to explicitly restrict ABIs (optional):
-        // ndk { abiFilters += ["armeabi-v7a","arm64-v8a","x86","x86_64"] }
+        ndk { abiFilters "arm64-v8a", "x86_64" }
     }
 
     buildTypes {
